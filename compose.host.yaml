@@ -47,6 +47,8 @@ services:
       PHOTOPRISM_ORIGINALS_PATH: "${PHOTOPRISM_ORIGINALS_PATH:-/photoprism/originals}"
       PHOTOPRISM_STORAGE_PATH: "${PHOTOPRISM_STORAGE_PATH:-/photoprism/storage}"
       PHOTOPRISM_IMPORT_PATH: "${PHOTOPRISM_IMPORT_PATH:-/photoprism/import}"
+      PHOTOPRISM_FACE_MATCH_DIST: "0.22"
+      PHOTOPRISM_FACE_CLUSTER_RADIUS: "0.30"
     working_dir: "/photoprism"
     volumes:
       - "${PHOTOPRISM_ORIGINALS_HOST:-D:/PICTURES}:${PHOTOPRISM_ORIGINALS_PATH:-/photoprism/originals}"
