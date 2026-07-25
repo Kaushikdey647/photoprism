@@ -57,8 +57,8 @@ services:
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                         # group id
       ## Access Management:
-      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
+      PHOTOPRISM_ADMIN_USER: "${PHOTOPRISM_ADMIN_USER:-admin}"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "${PHOTOPRISM_ADMIN_PASSWORD:-photoprism}"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
       PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
@@ -110,17 +110,17 @@ services:
       PGPORT: "${POSTGRES_PORT:-4002}"               # default PostgreSQL database port used by "psql"
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:${MARIADB_PORT:-4001}"
-      PHOTOPRISM_DATABASE_NAME: "photoprism"
-      PHOTOPRISM_DATABASE_USER: "root"
-      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
+      PHOTOPRISM_DATABASE_NAME: "${PHOTOPRISM_DATABASE_NAME:-photoprism}"
+      PHOTOPRISM_DATABASE_USER: "${PHOTOPRISM_DATABASE_USER:-root}"
+      PHOTOPRISM_DATABASE_PASSWORD: "${PHOTOPRISM_DATABASE_PASSWORD:-photoprism}"
       PHOTOPRISM_TEST_DRIVER: "sqlite"
       # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
       WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
-      PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
-      PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
-      PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
+      PHOTOPRISM_ASSETS_PATH: "${PHOTOPRISM_ASSETS_PATH:-/go/src/github.com/photoprism/photoprism/assets}"
+      PHOTOPRISM_STORAGE_PATH: "${PHOTOPRISM_STORAGE_PATH:-/photoprism/storage}"
+      PHOTOPRISM_ORIGINALS_PATH: "${PHOTOPRISM_ORIGINALS_PATH:-/photoprism/originals}"
       PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
-      PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
+      PHOTOPRISM_IMPORT_PATH: "${PHOTOPRISM_IMPORT_PATH:-/photoprism/import}"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
       PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
@@ -164,8 +164,8 @@ services:
     #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     volumes:
-      - ".:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
-      - "./storage:/photoprism"
+      - "${PHOTOPRISM_REPO_ROOT:-.}:${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
+      - "${PHOTOPRISM_STORAGE_ROOT:-./storage}:/photoprism"
       - "go-mod:/go/pkg/mod"
 
   ## Traefik v3 (Reverse Proxy)
@@ -219,15 +219,15 @@ services:
     ports:
       - "${SERVICES_BIND_HOST:-127.0.0.1}:${MARIADB_PORT:-4001}:${MARIADB_PORT:-4001}" # MariaDB
     volumes:
-      - "mariadb:/var/lib/mysql"
+      - "${MARIADB_DATA_DIR:-./storage/services/mariadb}:/var/lib/mysql"
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       MARIADB_AUTO_UPGRADE: "1"
       MARIADB_INITDB_SKIP_TZINFO: "1"
-      MARIADB_DATABASE: "photoprism"
-      MARIADB_USER: "photoprism"
-      MARIADB_PASSWORD: "photoprism"
-      MARIADB_ROOT_PASSWORD: "photoprism"
+      MARIADB_DATABASE: "${MARIADB_DATABASE:-photoprism}"
+      MARIADB_USER: "${MARIADB_USER:-photoprism}"
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD:-photoprism}"
+      MARIADB_ROOT_PASSWORD: "${MARIADB_ROOT_PASSWORD:-photoprism}"
 
   ## PostgreSQL (Database Server)
   ## Docs: https://www.postgresql.org/docs/current/index.html

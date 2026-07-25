@@ -1,0 +1,80 @@
+services:
+  photoprism:
+    image: photoprism/photoprism:latest
+    stop_grace_period: 15s
+    depends_on:
+      - mariadb
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    ports:
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:2342:2342"
+    environment:
+      PHOTOPRISM_ADMIN_USER: "${PHOTOPRISM_ADMIN_USER:-admin}"
+      PHOTOPRISM_ADMIN_PASSWORD: "${PHOTOPRISM_ADMIN_PASSWORD:-insecure}"
+      PHOTOPRISM_AUTH_MODE: "${PHOTOPRISM_AUTH_MODE:-password}"
+      PHOTOPRISM_DEFAULT_LOCALE: "en"
+      PHOTOPRISM_PLACES_LOCALE: "local"
+      PHOTOPRISM_SITE_URL: "${PHOTOPRISM_SITE_URL:-http://localhost:2342/}"
+      PHOTOPRISM_DISABLE_TLS: "${PHOTOPRISM_DISABLE_TLS:-false}"
+      PHOTOPRISM_DEFAULT_TLS: "${PHOTOPRISM_DEFAULT_TLS:-true}"
+      PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"
+      PHOTOPRISM_DEBUG: "${PHOTOPRISM_DEBUG:-false}"
+      PHOTOPRISM_READONLY: "${PHOTOPRISM_READONLY:-false}"
+      PHOTOPRISM_EXPERIMENTAL: "${PHOTOPRISM_EXPERIMENTAL:-false}"
+      PHOTOPRISM_DISABLE_CHOWN: "${PHOTOPRISM_DISABLE_CHOWN:-false}"
+      PHOTOPRISM_DISABLE_WEBDAV: "${PHOTOPRISM_DISABLE_WEBDAV:-false}"
+      PHOTOPRISM_DISABLE_MCP: "${PHOTOPRISM_DISABLE_MCP:-false}"
+      PHOTOPRISM_DISABLE_SETTINGS: "${PHOTOPRISM_DISABLE_SETTINGS:-false}"
+      PHOTOPRISM_DISABLE_TENSORFLOW: "${PHOTOPRISM_DISABLE_TENSORFLOW:-false}"
+      PHOTOPRISM_DISABLE_RAW: "${PHOTOPRISM_DISABLE_RAW:-false}"
+      PHOTOPRISM_SIDECAR_YAML: "true"
+      PHOTOPRISM_BACKUP_ALBUMS: "true"
+      PHOTOPRISM_BACKUP_DATABASE: "true"
+      PHOTOPRISM_BACKUP_SCHEDULE: "daily"
+      PHOTOPRISM_INDEX_SCHEDULE: "${PHOTOPRISM_INDEX_SCHEDULE:-}"
+      PHOTOPRISM_AUTO_INDEX: "${PHOTOPRISM_AUTO_INDEX:-300}"
+      PHOTOPRISM_AUTO_IMPORT: "${PHOTOPRISM_AUTO_IMPORT:--1}"
+      PHOTOPRISM_ORIGINALS_LIMIT: "${PHOTOPRISM_ORIGINALS_LIMIT:-5000}"
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"
+      PHOTOPRISM_DATABASE_NAME: "${PHOTOPRISM_DATABASE_NAME:-photoprism}"
+      PHOTOPRISM_DATABASE_USER: "${PHOTOPRISM_DATABASE_USER:-photoprism}"
+      PHOTOPRISM_DATABASE_PASSWORD: "${PHOTOPRISM_DATABASE_PASSWORD:-insecure}"
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+      PHOTOPRISM_SITE_DESCRIPTION: "${PHOTOPRISM_SITE_DESCRIPTION:-}"
+      PHOTOPRISM_SITE_AUTHOR: "${PHOTOPRISM_SITE_AUTHOR:-}"
+      PHOTOPRISM_ORIGINALS_PATH: "${PHOTOPRISM_ORIGINALS_PATH:-/photoprism/originals}"
+      PHOTOPRISM_STORAGE_PATH: "${PHOTOPRISM_STORAGE_PATH:-/photoprism/storage}"
+      PHOTOPRISM_IMPORT_PATH: "${PHOTOPRISM_IMPORT_PATH:-/photoprism/import}"
+    working_dir: "/photoprism"
+    volumes:
+      - "${PHOTOPRISM_ORIGINALS_HOST:-D:/PICTURES}:${PHOTOPRISM_ORIGINALS_PATH:-/photoprism/originals}"
+      - "${PHOTOPRISM_STORAGE_HOST:-./storage}:${PHOTOPRISM_STORAGE_PATH:-/photoprism/storage}"
+      - "${PHOTOPRISM_IMPORT_HOST:-./import}:${PHOTOPRISM_IMPORT_PATH:-/photoprism/import}"
+
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    stop_grace_period: 15s
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: >-
+      --innodb-buffer-pool-size=512M
+      --lower-case-table-names=1
+      --transaction-isolation=READ-COMMITTED
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=512
+      --innodb-rollback-on-timeout=OFF
+      --innodb-lock-wait-timeout=120
+    volumes:
+      - "${MARIADB_DATA_DIR:-./storage/services/mariadb}:/var/lib/mysql"
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "${MARIADB_DATABASE:-photoprism}"
+      MARIADB_USER: "${MARIADB_USER:-photoprism}"
+      MARIADB_PASSWORD: "${MARIADB_PASSWORD:-insecure}"
+      MARIADB_ROOT_PASSWORD: "${MARIADB_ROOT_PASSWORD:-insecure}"
