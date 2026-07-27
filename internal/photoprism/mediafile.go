@@ -66,6 +66,28 @@ type MediaFile struct {
 	fileMutex        sync.Mutex
 	location         *entity.Cell
 	imageConfig      *image.Config
+	relatedMain      *MediaFile
+}
+
+// SetRelatedMain caches the main file of the group this file belongs to, so
+// callers that already resolved the group do not re-run RelatedFiles. Only Main
+// is cached: the file list grows while indexing, so a cached list would go stale.
+func (m *MediaFile) SetRelatedMain(main *MediaFile) {
+	if m == nil {
+		return
+	}
+
+	m.relatedMain = main
+}
+
+// RelatedMain returns the cached main file of this file's group, or nil when the
+// group was not resolved by the caller.
+func (m *MediaFile) RelatedMain() *MediaFile {
+	if m == nil {
+		return nil
+	}
+
+	return m.relatedMain
 }
 
 // NewMediaFile resolves fileName (following symlinks) and initializes a MediaFile
