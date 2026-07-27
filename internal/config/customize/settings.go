@@ -26,6 +26,7 @@ type Settings struct {
 	Import    ImportSettings   `json:"import" yaml:"Import"`
 	Index     IndexSettings    `json:"index" yaml:"Index"`
 	Stack     StackSettings    `json:"stack" yaml:"Stack"`
+	Cull      CullSettings     `json:"cull" yaml:"Cull"`
 	Share     ShareSettings    `json:"share" yaml:"Share"`
 	Download  DownloadSettings `json:"download" yaml:"Download"`
 	Albums    AlbumsSettings   `json:"albums" yaml:"Albums"`
@@ -88,6 +89,12 @@ func NewSettings(theme, language, timeZone string) *Settings {
 			Meta: true,
 			Name: false,
 		},
+		Cull: CullSettings{
+			Enabled:     true,
+			AutoArchive: true,
+			Window:      2,
+			SameCamera:  true,
+		},
 		Share: ShareSettings{
 			Title: "",
 		},
@@ -115,6 +122,11 @@ func (s *Settings) Propagate() {
 
 	if s.Maps.Style == "" {
 		s.Maps.Style = DefaultMapsStyle
+	}
+
+	// Ensure cull settings have safe defaults when missing from settings.yml.
+	if s.Cull.Window <= 0 {
+		s.Cull.Window = 2
 	}
 
 	// Reset the import destination pattern unless it is already a normalized, valid value,

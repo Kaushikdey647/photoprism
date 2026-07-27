@@ -52,6 +52,8 @@ export class Photo extends RestModel {
       Type: media.Image,
       TypeSrc: "",
       Stack: 0,
+      CullUID: "",
+      CullRole: "",
       Favorite: false,
       Private: false,
       Scan: false,
@@ -423,6 +425,11 @@ export class Photo extends RestModel {
 
   isStack() {
     return this.generateIsStack(this.Type, this.Files);
+  }
+
+  // isCull reports whether this photo belongs to a near-duplicate cull group.
+  isCull() {
+    return !!(this.CullUID && this.CullUID !== "");
   }
 
   generateIsStack = memoizeOne((type, files) => {

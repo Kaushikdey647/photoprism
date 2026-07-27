@@ -367,6 +367,9 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		case terms["stacks"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "stacks", "")
 			frm.Stack = true
+		case terms["culls"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "culls", "")
+			frm.Cull = true
 		case terms["panoramas"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "panoramas", "")
 			frm.Panorama = true
@@ -802,6 +805,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Find stacks only.
 	if frm.Stack {
 		s = s.Where("photos.id IN (SELECT a.photo_id FROM files a JOIN files b ON a.id != b.id AND a.photo_id = b.photo_id AND a.file_type = b.file_type WHERE a.file_type='jpg')")
+	}
+
+	// Find photos that belong to a near-duplicate cull group.
+	if frm.Cull {
+		s = s.Where("photos.photo_uid IN (SELECT photo_uid FROM photos_culls)")
 	}
 
 	// Find photos in albums or not in an album, unless search results are limited to a scope.

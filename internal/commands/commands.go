@@ -60,6 +60,7 @@ var PhotoPrism = []*cli.Command{
 	CopyCommand,
 	DownloadCommand,
 	VisionCommands,
+	CullCommands,
 	FacesCommands,
 	CamerasCommand,
 	LensesCommand,

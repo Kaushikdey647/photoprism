@@ -42,6 +42,8 @@ var Entities = Tables{
 	Album{}.TableName():             &Album{},
 	AlbumUser{}.TableName():         &AlbumUser{},
 	PhotoAlbum{}.TableName():        &PhotoAlbum{},
+	Cull{}.TableName():              &Cull{},
+	PhotoCull{}.TableName():         &PhotoCull{},
 	Label{}.TableName():             &Label{},
 	Category{}.TableName():          &Category{},
 	PhotoLabel{}.TableName():        &PhotoLabel{},

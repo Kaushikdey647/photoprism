@@ -8,6 +8,7 @@ var (
 	ShareWorker  = Activity{}
 	MetaWorker   = Activity{}
 	VisionWorker = Activity{}
+	CullWorker   = Activity{}
 	FacesWorker  = Activity{}
 	UpdatePeople = Activity{}
 	BatchEdit    = Activity{}
@@ -21,6 +22,7 @@ func CancelAll() {
 	ShareWorker.Cancel()
 	MetaWorker.Cancel()
 	VisionWorker.Cancel()
+	CullWorker.Cancel()
 	FacesWorker.Cancel()
 	UpdatePeople.Cancel()
 	BatchEdit.Cancel()
@@ -34,6 +36,7 @@ func WorkersRunning() bool {
 		ShareWorker.Running() ||
 		MetaWorker.Running() ||
 		VisionWorker.Running() ||
+		CullWorker.Running() ||
 		FacesWorker.Running() ||
 		BatchEdit.Running()
 }

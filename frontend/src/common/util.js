@@ -918,6 +918,8 @@ export default class $util {
         return $gettext("Manual");
       case "vision":
         return $gettext("Vision");
+      case "cull":
+        return $gettext("Cull");
       case "admin":
         return $gettext("Admin");
       default:

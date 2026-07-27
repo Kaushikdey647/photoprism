@@ -125,6 +125,12 @@
                   </v-list-item-title>
                 </v-list-item>
 
+                <v-list-item :to="{ name: 'culls' }" :exact="true" variant="text" class="nav-culls" @click.stop="">
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Near Duplicates`) }}
+                  </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item
                   v-show="isSponsor"
                   :to="{ name: 'browse', query: { q: 'vectors' } }"

@@ -74,6 +74,9 @@
 
             <div class="preview-details">
               <div v-if="!isSharedView && hidePrivate && m.Private" class="info-icon"><i class="mdi mdi-lock" /></div>
+              <div v-if="m.isCull()" class="info-icon" :title="$gettext('Near Duplicate')">
+                <i class="mdi mdi-checkbox-multiple-outline" />
+              </div>
               <div v-if="m.Type === 'video'" :title="$gettext('Video')" class="info-text">
                 {{ m.getDurationInfo() }}
               </div>

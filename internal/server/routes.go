@@ -135,6 +135,14 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.PhotoPrimary(APIv1)
 	api.PhotoUnstack(APIv1)
 
+	// Near-duplicate cull groups.
+	api.SearchCulls(APIv1)
+	api.GetCull(APIv1)
+	api.SetCullKeeper(APIv1)
+	api.ProtectCullMember(APIv1)
+	api.RestoreCull(APIv1)
+	api.DeleteCull(APIv1)
+
 	// Photo Albums.
 	api.SearchAlbums(APIv1)
 	api.GetAlbum(APIv1)

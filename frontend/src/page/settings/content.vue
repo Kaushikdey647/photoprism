@@ -112,6 +112,78 @@
         </v-card-actions>
       </v-card>
 
+      <v-card v-if="isSuperAdmin" flat tile class="mt-0 px-1 bg-background">
+        <v-card-title class="pb-0 text-subtitle-2">
+          {{ $gettext(`Near Duplicates`) }}
+        </v-card-title>
+
+        <v-card-actions>
+          <v-row align="start" dense>
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.cull.enabled"
+                class="ma-0 pa-0 input-cull-enabled"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Enabled')"
+                :hint="$gettext('Detect near-duplicate bursts and group them for review.')"
+                prepend-icon="mdi-checkbox-multiple-outline"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.cull.autoArchive"
+                class="ma-0 pa-0 input-cull-auto-archive"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Auto Archive')"
+                :hint="$gettext('Soft-archive non-keeper photos in detected groups.')"
+                prepend-icon="mdi-archive-arrow-down-outline"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="4">
+              <v-checkbox
+                v-model="settings.cull.sameCamera"
+                class="ma-0 pa-0 input-cull-same-camera"
+                density="compact"
+                color="surface-variant"
+                :label="$gettext('Same Camera')"
+                :hint="$gettext('Only group photos taken with the same camera.')"
+                prepend-icon="mdi-camera"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-checkbox>
+            </v-col>
+
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
+              <v-text-field
+                v-model.number="settings.cull.window"
+                class="input-cull-window"
+                type="number"
+                min="1"
+                max="60"
+                density="compact"
+                variant="underlined"
+                :label="$gettext('Time Window (s)')"
+                :hint="$gettext('Maximum seconds between photos in a burst group.')"
+                persistent-hint
+                @update:model-value="onChange"
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-title class="pb-0 text-subtitle-2">
           {{ $gettext(`Search`) }}

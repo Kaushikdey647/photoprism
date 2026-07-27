@@ -1306,6 +1306,58 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("VISION_FILTER"),
 		}}, {
 		Flag: &cli.BoolFlag{
+			Name:    "disable-cull",
+			Usage:   "disables automatic near-duplicate / burst cull detection",
+			EnvVars: EnvVars("DISABLE_CULL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cull-schedule",
+			Usage:   "cull worker `SCHEDULE` for background near-duplicate detection (e.g. \"0 3 * * *\") or at a random time (daily, weekly)",
+			EnvVars: EnvVars("CULL_SCHEDULE"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "cull-filter",
+			Usage:   "cull worker search `FILTER` applied to scheduled runs",
+			Value:   "public:true",
+			EnvVars: EnvVars("CULL_FILTER"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "cull-window",
+			Usage:   "maximum taken-time gap in `SECONDS` for burst / near-duplicate grouping",
+			Value:   2,
+			EnvVars: EnvVars("CULL_WINDOW"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "cull-diff",
+			Usage:   "maximum FileDiff Hamming `DISTANCE` for near-duplicate confirmation",
+			Value:   3,
+			EnvVars: EnvVars("CULL_DIFF"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "cull-same-camera",
+			Usage:   "require the same camera when grouping near-duplicates",
+			Value:   true,
+			EnvVars: EnvVars("CULL_SAME_CAMERA"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "cull-min",
+			Usage:   "minimum `NUMBER` of photos required to form a cull group",
+			Value:   2,
+			EnvVars: EnvVars("CULL_MIN"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "cull-auto-archive",
+			Usage:   "soft-archive non-keeper photos in detected cull groups",
+			Value:   true,
+			EnvVars: EnvVars("CULL_AUTO_ARCHIVE"),
+		}}, {
+		Flag: &cli.BoolFlag{
+			Name:    "cull-skip-favorites",
+			Usage:   "never auto-archive favorite photos during cull",
+			Value:   true,
+			EnvVars: EnvVars("CULL_SKIP_FAVORITES"),
+		}}, {
+		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
 			EnvVars: EnvVars("DETECT_NSFW"),

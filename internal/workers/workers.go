@@ -64,6 +64,11 @@ func Start(conf *config.Config) {
 			if err = NewJob("vision", conf.VisionSchedule(), NewVision(conf).StartScheduled); err != nil {
 				log.Errorf("scheduler: %s (vision)", err)
 			}
+
+			// Schedule near-duplicate cull job.
+			if err = NewJob("cull", conf.CullSchedule(), NewCull(conf).StartScheduled); err != nil {
+				log.Errorf("scheduler: %s (cull)", err)
+			}
 		}
 
 		// Start the scheduler.

@@ -45,6 +45,7 @@ const (
 	SrcXmp      Src = "xmp"               // Prio 32
 	SrcBatch    Src = "batch"             // Prio 64
 	SrcVision   Src = "vision"            // Prio 64
+	SrcCull     Src = "cull"              // Prio 64
 	SrcManual   Src = "manual"            // Prio 64
 	SrcAdmin    Src = "admin"             // Prio 128
 )
@@ -83,6 +84,7 @@ var SrcPriority = Priorities{
 	SrcXmp:      32,
 	SrcBatch:    64,
 	SrcVision:   64,
+	SrcCull:     64,
 	SrcManual:   64,
 	SrcAdmin:    128,
 }
@@ -133,6 +135,7 @@ var SrcDesc = map[Src]string{
 	SrcXmp:      "XMP Sidecar",
 	SrcBatch:    "Batch Edit",
 	SrcVision:   "Computer Vision (manual)",
+	SrcCull:     "Near Duplicate Cull",
 	SrcManual:   "Edited Manually",
 	SrcAdmin:    "Admin Override",
 }

@@ -31,6 +31,7 @@ import Browse from "page/library/browse.vue";
 import Errors from "page/library/errors.vue";
 import Labels from "page/labels.vue";
 import People from "page/people.vue";
+import Culls from "page/culls.vue";
 import Library from "page/library.vue";
 import Settings from "page/settings.vue";
 import Services from "page/services.vue";
@@ -429,6 +430,12 @@ export default [
     component: Photos,
     meta: { title: $gettext("Review"), requiresAuth: true },
     props: { staticFilter: { review: "true" } },
+  },
+  {
+    name: "culls",
+    path: "/culls",
+    component: Culls,
+    meta: { title: $gettext("Near Duplicates"), requiresAuth: true },
   },
   {
     name: "private",

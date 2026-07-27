@@ -180,6 +180,7 @@ import Thumb from "model/thumb";
 import Collection from "model/collection";
 import { Photo } from "model/photo";
 import { Album } from "model/album";
+import Cull from "model/cull";
 import * as media from "common/media";
 import { isPdfDocument } from "common/pdf";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
@@ -1779,6 +1780,46 @@ export default {
           },
         },
         {
+          name: "cull-keeper",
+          icon: "mdi-star-check-outline",
+          text: this.$gettext("Keep as Best"),
+          disabled: !this.model?.UID || !this.model?.CullUID,
+          visible: this.canArchive && !!this.model?.CullUID && this.model?.CullRole !== "keeper",
+          click: () => {
+            this.onCullKeeper();
+          },
+        },
+        {
+          name: "cull-protect",
+          icon: "mdi-shield-check-outline",
+          text: this.$gettext("Protect from Cull"),
+          disabled: !this.model?.UID || !this.model?.CullUID,
+          visible: this.canArchive && !!this.model?.CullUID && this.model?.CullRole !== "keep",
+          click: () => {
+            this.onCullProtect();
+          },
+        },
+        {
+          name: "cull-restore",
+          icon: "mdi-archive-arrow-up-outline",
+          text: this.$gettext("Restore Cull Group"),
+          disabled: !this.model?.CullUID,
+          visible: this.canArchive && !!this.model?.CullUID,
+          click: () => {
+            this.onCullRestore();
+          },
+        },
+        {
+          name: "cull-dissolve",
+          icon: "mdi-close-box-multiple-outline",
+          text: this.$gettext("Dissolve Cull Group"),
+          disabled: !this.model?.CullUID,
+          visible: this.canArchive && !!this.model?.CullUID,
+          click: () => {
+            this.onCullDissolve();
+          },
+        },
+        {
           name: "download",
           icon: "mdi-download",
           text: this.$gettext("Download"),
@@ -3284,6 +3325,55 @@ export default {
       // subscriber in model/photo.js — no manual evictPhoto() here.
       this.model.restore().then(() => {
         this.$notify.success(this.$gettext("Restored"));
+      });
+    },
+    // onCullKeeper promotes the current photo to keeper in its cull group.
+    onCullKeeper() {
+      if (!this.canArchive || !this.model?.UID || !this.model?.CullUID) {
+        return;
+      }
+      this.pauseSlideshow();
+      const cull = new Cull({ UID: this.model.CullUID });
+      cull.setKeeper(this.model.UID).then(() => {
+        this.model.CullRole = "keeper";
+        this.$notify.success(this.$gettext("Kept as Best"));
+      });
+    },
+    // onCullProtect marks the current photo as manually kept in its cull group.
+    onCullProtect() {
+      if (!this.canArchive || !this.model?.UID || !this.model?.CullUID) {
+        return;
+      }
+      this.pauseSlideshow();
+      const cull = new Cull({ UID: this.model.CullUID });
+      cull.protect(this.model.UID).then(() => {
+        this.model.CullRole = "keep";
+        this.model.Archived = false;
+        this.$notify.success(this.$gettext("Protected from Cull"));
+      });
+    },
+    // onCullRestore restores all auto-archived rejects in the cull group.
+    onCullRestore() {
+      if (!this.canArchive || !this.model?.CullUID) {
+        return;
+      }
+      this.pauseSlideshow();
+      const cull = new Cull({ UID: this.model.CullUID });
+      cull.restoreGroup().then(() => {
+        this.$notify.success(this.$gettext("Restored"));
+      });
+    },
+    // onCullDissolve dissolves the cull group without deleting files.
+    onCullDissolve() {
+      if (!this.canArchive || !this.model?.CullUID) {
+        return;
+      }
+      this.pauseSlideshow();
+      const cull = new Cull({ UID: this.model.CullUID });
+      cull.dissolve().then(() => {
+        this.model.CullUID = "";
+        this.model.CullRole = "";
+        this.$notify.success(this.$gettext("Dissolved"));
       });
     },
     // Downloads the original files of the current picture.

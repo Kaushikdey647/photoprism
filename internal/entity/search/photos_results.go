@@ -38,6 +38,8 @@ type Photo struct {
 	PhotoCountry     string        `json:"Country" select:"photos.photo_country"`
 	PhotoStack       int8          `json:"Stack" select:"photos.photo_stack"`
 	PhotoFavorite    bool          `json:"Favorite" select:"photos.photo_favorite"`
+	CullUID          string        `json:"CullUID,omitempty" select:"(SELECT photos_culls.cull_uid FROM photos_culls WHERE photos_culls.photo_uid = photos.photo_uid LIMIT 1) AS cull_uid"`
+	CullRole         string        `json:"CullRole,omitempty" select:"(SELECT photos_culls.member_role FROM photos_culls WHERE photos_culls.photo_uid = photos.photo_uid LIMIT 1) AS cull_role"`
 	PhotoPrivate     bool          `json:"Private" select:"photos.photo_private"`
 	PhotoIso         int           `json:"Iso" select:"photos.photo_iso"`
 	PhotoFocalLength int           `json:"FocalLength" select:"photos.photo_focal_length"`

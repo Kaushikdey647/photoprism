@@ -255,6 +255,15 @@ type Options struct {
 	VisionKey                 string        `yaml:"VisionKey" json:"-" flag:"vision-key"`
 	VisionSchedule            string        `yaml:"VisionSchedule" json:"VisionSchedule" flag:"vision-schedule"`
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
+	CullDisabled              bool          `yaml:"CullDisabled" json:"CullDisabled" flag:"disable-cull"`
+	CullSchedule              string        `yaml:"CullSchedule" json:"CullSchedule" flag:"cull-schedule"`
+	CullFilter                string        `yaml:"CullFilter" json:"CullFilter" flag:"cull-filter"`
+	CullWindow                int           `yaml:"CullWindow" json:"CullWindow" flag:"cull-window"`
+	CullDiff                  int           `yaml:"CullDiff" json:"CullDiff" flag:"cull-diff"`
+	CullSameCamera            bool          `yaml:"CullSameCamera" json:"CullSameCamera" flag:"cull-same-camera"`
+	CullMin                   int           `yaml:"CullMin" json:"CullMin" flag:"cull-min"`
+	CullAutoArchive           bool          `yaml:"CullAutoArchive" json:"CullAutoArchive" flag:"cull-auto-archive"`
+	CullSkipFavorites         bool          `yaml:"CullSkipFavorites" json:"CullSkipFavorites" flag:"cull-skip-favorites"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
@@ -317,6 +326,15 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.SidecarYaml = true
 	c.BackupDatabase = true
 	c.BackupAlbums = true
+
+	// Near-duplicate cull defaults (automatic but safe).
+	c.CullSameCamera = true
+	c.CullAutoArchive = true
+	c.CullSkipFavorites = true
+	c.CullWindow = 2
+	c.CullDiff = 3
+	c.CullMin = 2
+	c.CullFilter = "public:true"
 
 	// Initialize options with the values from the "defaults.yml" file, if it exists.
 	if c.DefaultsYaml = defaultsYaml(ctx); !fs.FileExistsNotEmpty(c.DefaultsYaml) {
