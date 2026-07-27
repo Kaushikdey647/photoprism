@@ -369,14 +369,23 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 
 			// Import face regions and names from XMP metadata onto the markers.
+			xmpChanged := false
 			if o.ImportFaceTags && file.FileHash != "" {
-				if n := reconcileXmpFaces(collectXmpFaces(m), &file, markers); n > 0 {
+				regions, collectErr := collectXmpFaces(m)
+				if collectErr != nil {
+					log.Warnf("index: %s while reading xmp face regions for %s", clean.Error(collectErr), logName)
+				} else if n, reconcileErr := reconcileXmpFaces(regions, &file, markers); reconcileErr != nil {
+					log.Warnf("index: %s while reconciling xmp face regions for %s", clean.Error(reconcileErr), logName)
+				} else if n > 0 {
+					xmpChanged = true
 					log.Debugf("index: imported %d xmp face region(s) for %s", n, logName)
 				}
 			}
 
-			// Skip when indexing faces only and no new markers were found.
-			if !file.UnsavedMarkers() && o.FacesOnly {
+			// Skip when indexing faces only and nothing changed. A delete-only
+			// reconcile persists no unsaved marker, so xmpChanged is tracked
+			// separately to keep the recomputed face count from going stale.
+			if !file.UnsavedMarkers() && !xmpChanged && o.FacesOnly {
 				result.Status = IndexSkipped
 				return result
 			}
@@ -1131,8 +1140,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	}
 
-	// Create backup of picture metadata in sidecar YAML file.
-	if file.FilePrimary && Config().SidecarYaml() {
+	// Create backup of picture metadata in sidecar YAML file. A changed XMP sidecar
+	// merges into the photo while the unchanged primary file is skipped, so it refreshes
+	// the backup itself; a rescan reindexes the primary file, which writes it anyway.
+	if (file.FilePrimary || m.IsXMP() && !o.Rescan) && Config().SidecarYaml() {
 		if err = photo.SaveSidecarYaml(Config().OriginalsPath(), Config().SidecarPath()); err != nil {
 			log.Errorf("index: %s in %s (save as yaml)", err, logName)
 		}
