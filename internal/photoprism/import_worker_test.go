@@ -90,7 +90,7 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 	}
 
 	// Isolate the database so the imported stack is the only photo present.
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "import-stacked-vectors.db"))
+	useTestDb(t, "import-stacked-vectors")
 
 	cfg := config.NewMinimalTestConfigWithDb("import-stacked-vectors", filepath.Join(t.TempDir(), "storage"))
 
